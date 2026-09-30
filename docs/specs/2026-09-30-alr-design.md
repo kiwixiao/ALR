@@ -201,8 +201,8 @@ Before any push, a Linux container built from `environment.yml` runs the unit te
 
 ## 13. Open questions for the author
 
-1. **License and GPL dependencies.** Keep MIT for ALR's code and document the GPL dependencies, as proposed? Or choose GPL 3 for ALR?
-2. **Copyright holder.** The line would read "Copyright (c) 2026 Qiwei Xiao", taken from the pythoncip metadata. Please confirm the name, and whether CCHMC needs to approve a public release.
+1. **License and GPL dependencies.** Resolved 2026-09-30: ALR stays MIT and the README documents the license of every dependency.
+2. **Copyright holder.** The CCHMC question is resolved 2026-09-30: the author states the code is their own work and no approval is needed. Still open: the line would read "Copyright (c) 2026 Qiwei Xiao", taken from the pythoncip metadata. Please confirm the name.
 3. **Author email.** The package metadata is public. Use no email, a GitHub noreply address, or your work address?
 4. **TotalSegmentator usage statistics.** The installed configuration has `send_usage_stats` set to true. I have not checked what is sent. Should `alr setup` turn it off, or leave the default and document it?
 5. **Extra TotalSegmentator files.** Step 1 keeps the arteries, veins and airway wall files that the `lung_vessels` task writes, as today. Delete them instead, so the case folder holds only the airway?
