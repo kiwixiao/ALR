@@ -55,6 +55,9 @@ def check_integrity(data, cases):
     golden = json.loads(GOLDEN.read_text())
     bad = []
     for case in cases:
+        if case not in golden:
+            print(f'no golden entry for {case}, integrity check skipped for it')
+            continue
         for rel, meta in golden[case]['files'].items():
             p = data / case / case / rel
             if not p.exists() or md5(p) != meta['md5']:
@@ -160,15 +163,19 @@ def reproduce(case, data, scratch):
 def main():
     ap = argparse.ArgumentParser(description='Reproduce the stored airway outputs with the original scripts.')
     ap.add_argument('--data', required=True, help='folder that holds CASE/CASE/ (the extracted regression data)')
-    ap.add_argument('--cases', nargs='*', default=DEFAULT_CASES)
+    ap.add_argument('--cases', nargs='*', help='case names (default: every case folder found in --data)')
     ap.add_argument('--scratch', help='working folder (default: a temporary folder, removed at the end)')
     args = ap.parse_args()
     data = Path(args.data)
+    if not args.cases:
+        args.cases = sorted(p.name for p in data.iterdir() if (p / p.name / 'airway_results').is_dir()) or DEFAULT_CASES
 
     bad = check_integrity(data, args.cases)
     if bad:
         sys.exit(f'data integrity check failed for {len(bad)} files, for example {bad[:3]}')
-    print('data integrity: every stored file matches tests/regression/golden.json')
+    known = [c for c in args.cases if c in json.loads(GOLDEN.read_text())]
+    if known:
+        print(f'data integrity: every stored file of {", ".join(known)} matches tests/regression/golden.json')
 
     scratch = Path(args.scratch) if args.scratch else Path(tempfile.mkdtemp(prefix='alr_ref_'))
     failed = False

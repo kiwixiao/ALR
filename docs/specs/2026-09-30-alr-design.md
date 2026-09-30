@@ -167,7 +167,7 @@ Each module is written test first, one at a time. The full test folder runs afte
 | Regression | Steps 2 to 10 from the stored TotalSegmentator masks reproduce the stored outputs. Step 11 is compared where a stored surface exists, which is the CF cases and not NL001. | Real cases, in a folder named by `ALR_DATA`. Nothing is copied into git. | When the folder exists |
 | Segmentation | TotalSegmentator on this machine gives an airway mask close to the stored one. | One CT | Only when asked |
 
-Regression cases: CF121 and CF008 (many disconnected fragments), NL001 and CF005 (both use the older `lobes_ml.nii.gz` lobe file). For all four, the stored isotropic mask is voxel identical to a resample of the stored TotalSegmentator mask. CF001 is excluded because its isotropic mask is older than its current TotalSegmentator output (Dice 0.851).
+Regression cases: 3 or 4 CTs chosen on the machine that builds ALR. `tools/build_reference_data.py` runs TotalSegmentator on them and then the original scripts, so the reference outputs come from the original code on the same machine and masks. On the author's Mac, the stored outputs of CF121, CF008, NL001 and CF005 were also reproduced byte for byte by the original scripts (`docs/baseline.md`); that data pack is optional and serves only as a cross platform check.
 
 Comparisons:
 
@@ -182,7 +182,7 @@ Before any push, a Linux container built from `environment.yml` runs the unit te
 
 ## 11. Rollout
 
-- **Phase A, ALR alone.** The author's `av_phenotype` code and its 249 finished cases stay untouched. The original scripts are copied into `reference/av_phenotype/`. The first task is to show, with `tools/reproduce_reference.py`, that they reproduce the stored outputs of the regression cases when run from the stored masks, first on the Mac and then on Linux. Nothing is ported before that is shown. Then the ten steps are ported one at a time, each with its tests, and step 11 is added.
+- **Phase A, ALR alone.** The author's `av_phenotype` code and its 249 finished cases stay untouched. The original scripts are copied into `reference/av_phenotype/`. The first task is to show, with `tools/reproduce_reference.py`, that they are deterministic on the build machine: the reference data is built from CTs of that machine and the original scripts reproduce it byte for byte. Nothing is ported before that is shown. Then the ten steps are ported one at a time, each with its tests, and step 11 is added.
 - **Phase B, side by side.** ALR runs on the regression cases into a scratch folder, and the outputs are compared with the stored ones.
 - **Phase C, hand over. This needs the author's explicit approval.** `run_pipeline.py` stages 22 to 29 and `run_airway_pipeline.py` call ALR, and the ten old scripts move to `archive/`. Five other scripts mention the airway stages or their outputs and must be checked first: `update_airway_csv_cohort.py`, `run_dysanapsis_cohort.py`, `compute_vascular_dysanapsis_volume_ratios.py`, `export_vessel_csv.py` and `export_vessel_3d.py`. ALR keeps every file name and column, so they should need no change.
 - **Linux acceptance.** Clone, create the environment, run `alr setup` and `alr check`. Copy CF008's CT and its TotalSegmentator masks and run `alr run`. The output must equal the Mac output. Then run TotalSegmentator on Linux from the CT alone and record the Dice against the Mac mask.

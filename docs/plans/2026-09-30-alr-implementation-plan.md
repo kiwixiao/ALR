@@ -71,7 +71,7 @@ The interface every step module offers is `run(case: Case) -> None`, where `Case
 ### Task 1: Environment file and package skeleton
 
 **Files:**
-- Create: `environment.yml`, `pyproject.toml`, `LICENSE`, `.gitignore`, `README.md` (stub), `src/alr/__init__.py`, `src/alr/__main__.py`, `src/alr/cli.py`, `tests/unit/test_version.py`
+- Create: `environment.yml`, `pyproject.toml`, `LICENSE`, `README.md` (stub), `src/alr/__init__.py`, `src/alr/__main__.py`, `src/alr/cli.py`, `tests/unit/test_version.py`
 
 **Interfaces:**
 - Produces: `alr.__version__: str`, `alr.cli.main(argv: list[str] | None = None) -> int`
@@ -203,28 +203,7 @@ def main(argv=None):
     return 0
 ```
 
-`LICENSE` is the standard MIT text with the line `Copyright (c) 2026 Qiwei Xiao`. `README.md` for now holds one line: `# ALR`. `.gitignore`:
-
-```
-__pycache__/
-*.py[cod]
-*.egg-info/
-.pytest_cache/
-build/
-dist/
-.DS_Store
-# No patient data or derived images, meshes or archives in this repository
-*.nii
-*.nii.gz
-*.nrrd
-*.vtk
-*.vtp
-*.vti
-*.stl
-*.tar
-*.tar.gz
-*.zip
-```
+`LICENSE` is the standard MIT text with the line `Copyright (c) 2026 Qiwei Xiao`. `README.md` for now holds one line: `# ALR`. The `.gitignore` already exists in the repository; leave it as it is (it blocks Python caches and every image, mesh and archive type).
 
 - [ ] **Step 4: Run the tests**
 
@@ -251,51 +230,53 @@ git commit -m "feat: package skeleton, environment file and MIT license"
 
 ---
 
-### Task 2: Baseline with the original scripts (no production code)
+### Task 2: Reference data and baseline on this machine (no production code)
 
-This task decides whether the regression approach works on this machine. Do not skip it.
+The regression tests compare ALR with the ORIGINAL scripts. This task makes the reference data from CTs that live on this machine, and checks that the original scripts are deterministic here. Nothing is copied from the author's Mac. Wherever a regression test in this plan says "4 passed", read "one pass per case in `ALR_CASES`".
 
 **Files:**
-- Modify: `docs/baseline.md` (the macOS result is already there; add a Linux section)
-- Use: `tools/reproduce_reference.py`, `tools/pack_regression_data.sh`, `tests/regression/golden.json`
+- Modify: `docs/baseline.md` (the macOS result is already there; replace its "Linux" section)
+- Use: `tools/build_reference_data.py`, `tools/reproduce_reference.py`
 
-- [ ] **Step 1: Get the regression data.** The author creates the data pack on the machine that holds the cohort, from the `av_phenotype` folder:
+- [ ] **Step 1: Choose the CTs.** Ask the author for a folder of CTs on this machine. Pick 3 or 4 that differ from each other (slice thickness, disease severity, one small and one large). Each must be a `.nii.gz` file; if the author has DICOM, convert with `dcm2niix -z y -o OUTDIR INDIR` first. Put the paths in a shell variable.
 
-```bash
-bash /path/to/ALR/tools/pack_regression_data.sh final_analysis alr_regression_data.tar
-```
-
-It holds CF121, CF008, NL001 and CF005 (about 74 MB, no CTs). Ask the author to copy it to this machine. Then:
+- [ ] **Step 2: Keep the weights in the environment, then build the reference data.** `tools/build_reference_data.py` runs TotalSegmentator (it downloads the models it needs on first use, so the machine needs internet) and then the original scripts, in place.
 
 ```bash
-mkdir -p ~/alr_data && tar -xf alr_regression_data.tar -C ~/alr_data
-export ALR_DATA=~/alr_data/final_analysis
+export TOTALSEG_HOME_DIR="$CONDA_PREFIX/share/totalsegmentator"
+python tools/build_reference_data.py --root ~/alr_ref --ct /data/ct_a.nii.gz /data/ct_b.nii.gz /data/ct_c.nii.gz
+export ALR_DATA=~/alr_ref
+export ALR_CASES=ct_a,ct_b,ct_c      # the case names are the CT file names without .nii.gz
 ```
 
-- [ ] **Step 2: Run the original chain and compare**
+Expected: for each CT the tool prints the TotalSegmentator commands, then the ten original steps, and ends with the `export` lines. Each case folder holds `totalseg_vessels/`, `totalseg_merged/`, `lung_airways_iso.nii.gz` and `airway_results/` with the centerline, CSV files, viewers and the surface STL. A failure here is a finding: report it, do not patch the original scripts.
+
+- [ ] **Step 3: Check that the original scripts are deterministic on this machine**
 
 ```bash
 python tools/reproduce_reference.py --data "$ALR_DATA"
 ```
 
-Expected on the author's Mac (already verified 2026-09-30): the integrity line, then PASS with "byte identical" for the isotropic mask, both TEASAR files, both centerline and Smith CSV files and the Smith JSON, for all four cases, and the final line `RESULT: all artifacts reproduced`.
+This runs the original steps again on the masks and compares the result with the reference data just built. Expected: `RESULT: all artifacts reproduced`, with "byte identical" on the six compared files of every case.
 
-- [ ] **Step 3: Decide**
+- [ ] **Step 4: Decide**
 
-| Result on this machine | Action |
+| Result | Action |
 |---|---|
 | All PASS, byte identical | Continue to Task 3. |
-| All PASS, some not byte identical (float tolerance) | Continue. Regression tests keep the tolerance in `tools/reproduce_reference.py`. Record which artifacts differ in `docs/baseline.md`. |
-| Any FAIL, or the integrity check fails | STOP. Do not port anything. Write the failing artifact, the size of the difference and the package versions into `docs/baseline.md`, commit it, and tell the author. Likely causes: a different `kimimaro`, `numpy` or `vtk` build on this platform. The author decides whether to compare by statistics instead. |
+| All PASS, some not byte identical (float tolerance) | Continue. Regression tests keep the tolerance in `tools/reproduce_reference.py`. Record which artifacts differ. |
+| Any FAIL | STOP. Write the failing artifact, the size of the difference and the package versions into `docs/baseline.md`, commit it, and tell the author. Likely cause: a nondeterministic library step on this platform. The author decides how to compare. |
 
-- [ ] **Step 4: Replace the "Linux" section of `docs/baseline.md`** with the date, the machine (`uname -a`, CPU or GPU), the output of `pip list | grep -iE "kimimaro|vtk|pyvista|nibabel|numpy|scipy|torch"`, and the result table for the four cases.
+- [ ] **Step 5: Replace the "Linux" section of `docs/baseline.md`** with the date, the machine (`uname -a`, CPU or GPU), the output of `pip list | grep -iE "kimimaro|vtk|pyvista|nibabel|numpy|scipy|torch"`, the list of CTs (names only, no patient information) and the result of Step 3.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
 git add docs/baseline.md
-git commit -m "docs: baseline reproduction of stored outputs with the original scripts"
+git commit -m "docs: baseline of the original scripts on this machine"
 ```
+
+The reference data stays in `~/alr_ref` and is never committed.
 
 ---
 
@@ -981,7 +962,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
 
-CASES = ['CF121', 'CF008', 'NL001', 'CF005']
+CASES = [c for c in os.environ.get('ALR_CASES', 'CF121,CF008,NL001,CF005').split(',') if c]
 
 
 @pytest.fixture(scope='session')
@@ -1331,7 +1312,7 @@ def test_lobe_labels_match_the_stored_ones(case_with_skeleton, stored):
 
 - [ ] **Step 2: Run it.** Expected: FAIL, import error.
 - [ ] **Step 3: Port by the recipe.** `LOBE_CANDIDATES` becomes `case.lobe_candidates`. `LOBE_NAMES` stays a module constant.
-- [ ] **Step 4: Run it.** Expected: 4 passed (NL001 and CF005 use `lobes_ml.nii.gz`, CF121 and CF008 the merged file).
+- [ ] **Step 4: Run it.** Expected: one pass per case in `ALR_CASES`.
 - [ ] **Step 5: Commit.** `git add src/alr/lobe_labels.py tests/regression/test_reg_lobe_labels.py && git commit -m "feat: step 6, lobe labels from the lobe mask"`
 
 ---
@@ -1988,9 +1969,9 @@ def test_documents_avoid_em_dashes_and_en_dashes():
 
 - [ ] **Step 1: Fresh environment from the file.** On a clean Linux machine or a clean container (`docker run -it --rm condaforge/miniforge3 bash`), run exactly the README commands: clone, `conda env create -f environment.yml`, `conda activate ALR`, `alr setup`, `alr check`. Expected: `alr check` exits 0 and lists the four models as present. Record any pin that had to change.
 - [ ] **Step 2: Unit tests.** `python -m pytest tests/unit -v`. Expected: all pass.
-- [ ] **Step 3: Regression.** Extract the data pack (Task 2) and run `ALR_DATA=... python -m pytest tests/regression -v`. Expected: all pass.
-- [ ] **Step 4: Whole pipeline from the stored masks.** Copy one case, for example CF121, into a scratch folder with its CT and its `totalseg_vessels/` and `totalseg_merged/` folders (the author supplies the CT, about 280 MB, and it is never committed). Run `alr run --ct <CT> --case-dir <scratch>`. Expected: steps 1 is skipped, steps 2 to 11 run, and the files equal the stored ones.
-- [ ] **Step 5: Segmentation on this machine.** Run `alr run` on the same CT in a folder without masks. Compute the Dice between the new `totalseg_vessels/lung_airways.nii.gz` and the stored one, and the vertex count and maximum generation of the new centerline against the stored ones. Write the numbers in `docs/baseline.md`. Do not set a pass threshold; report the numbers to the author.
+- [ ] **Step 3: Regression.** With `ALR_DATA` and `ALR_CASES` from Task 2 set: `python -m pytest tests/regression -v`. Expected: all pass (the surface test is skipped for a case that has no stored surface).
+- [ ] **Step 4: Whole pipeline from a CT alone.** Pick one CT of Task 2. Run `alr run --ct <CT> --case-dir ~/alr_out/<name> --name <name>` with nothing else in that folder, so TotalSegmentator runs too. Expected: 11 steps finish. Then compare with the reference data: the Dice of the new `totalseg_vessels/lung_airways.nii.gz` against the reference mask, and the outputs with `ref.compare_vtk`, `ref.compare_csv` and `ref.compare_json` from `tools/reproduce_reference.py`. On the same machine and device the masks should be identical. If they differ, report the Dice, the vertex counts and the maximum generation of both, and do not choose a threshold.
+- [ ] **Step 5: Optional cross platform check.** Only if the author supplies the 71 MB data pack from the Mac (`tools/pack_regression_data.sh`) and the CF121 CT: run `python tools/reproduce_reference.py --data <pack>/final_analysis` on this machine and report whether Linux reproduces the Mac outputs.
 - [ ] **Step 6: Report.** Update `PROGRESS.md` (NEXT STEP, STATUS, SESSION LOG), commit, push the branch, and tell the author that the branch is ready for review. Do not merge.
 
 ---

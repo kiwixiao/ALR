@@ -1,0 +1,18 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+.DS_Store
+# No patient data or derived images, meshes or archives in this repository
+*.nii
+*.nii.gz
+*.nrrd
+*.vtk
+*.vtp
+*.vti
+*.stl
+*.tar
+*.tar.gz
+*.zip
