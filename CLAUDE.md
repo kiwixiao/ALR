@@ -4,18 +4,28 @@
 
 ## What this is
 
-ALR is a public, MIT licensed Python package and conda environment that turns a chest CT into an airway mask, an airway surface and a labeled TEASAR centerline. It is a faithful port of the airway chain of the `av_phenotype` pipeline. The design is in `docs/specs/2026-09-30-alr-design.md`. Read it first.
+ALR (airway lung ratio) is a public, MIT licensed Python package and one conda environment. From a chest CT it produces an airway mask, an airway surface and a labeled TEASAR centerline. It is a faithful port of the airway chain of the author's `av_phenotype` pipeline.
 
-## State
+## Where to start
 
-Design phase. The spec awaits the author's review. No package code exists yet. Progress lives in `PROGRESS.md`.
+Read `docs/HANDOFF.md` first. Then the spec in `docs/specs/`, then the plan in `docs/plans/`. The plan has 20 tasks. Build them in order on `feature/port-airway-chain`. Progress lives in `PROGRESS.md`.
+
+## Standing rules from the author
+
+- Facts only. Verify before you answer. No invented facts and no invented API calls: when source or documentation is available, check that a function exists and how it is used before you call it.
+- Protect working code. Make small changes one at a time and test each one. Never touch code that works and is unrelated to the current task. `reference/` is read only.
+- Git: substantive work on a feature branch. The author merges to `main`. Commits and pull request text carry no Claude attribution line of any kind. Nothing is force pushed.
+- Progress: after every unit of progress, update NEXT STEP, STATUS and SESSION LOG in `PROGRESS.md` in the same commit.
+- Memory lives in this folder under `.claude/memory/`, never under `~/.claude/`.
+- No absolute home paths in any script, and no interpreter pinned to a local conda path.
+- Use `python`, not `python3`.
+- Writing style for documents and comments: no em dashes or en dashes; no hyphens between words (write "cross sectional"); identifiers and file names keep their form; ranges use "to"; short complete sentences, one idea each, with a subject and a verb; plain and direct; none of the words comprehensive, additionally, moreover, furthermore, crucial, robust, leverage, delve, seamless, holistic; no "not just X, but Y".
+- Code quality: test first, real code, no stubs, no TODO comments, no skipped or weakened tests.
 
 ## Standing decisions
 
 - The port copies algorithms unchanged. Only mechanical refactoring is allowed.
-- The output file names and columns are a contract with `av_phenotype` and must not change.
+- Output file names and columns are a contract with `av_phenotype` and never change.
 - No patient data and no file derived from a patient scan goes into git.
-- No absolute home paths and no interpreter pinned to a local conda path in any script.
-- Work happens on a feature branch. The author merges to `main`. Commits carry no Claude attribution line.
-- Nothing is pushed to GitHub until the author says so.
-- Write each module test first and run the whole test folder after each one.
+- License MIT, copyright line `Copyright (c) 2026 Qiwei Xiao`. `kimimaro` is GPL 3 or later and is documented in the README.
+- TotalSegmentator usage statistics are turned off by `alr setup`. No demo scan is shipped.

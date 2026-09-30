@@ -1,0 +1,414 @@
+{
+ "CF005": {
+  "centerline_csv": {
+   "header": [
+    "case_id",
+    "vertex_id",
+    "x_mm",
+    "y_mm",
+    "z_mm",
+    "Radius_mm",
+    "Diameter_mm",
+    "Degree",
+    "Generation",
+    "Generation_Type",
+    "Strahler_Order",
+    "Is_Root",
+    "Is_Trachea",
+    "Distance_From_Root_mm",
+    "Lobe",
+    "Lobe_Name",
+    "Lobe_Topology",
+    "Lobe_Topology_Name",
+    "V_lung_mL",
+    "V_LUL_mL",
+    "V_LLL_mL",
+    "V_RUL_mL",
+    "V_RML_mL",
+    "V_RLL_mL",
+    "smith_dysanapsis_index",
+    "simple_ratio_D_over_V13"
+   ],
+   "rows": 4162
+  },
+  "files": {
+   "airway_results/CF005_airway_3d.html": {
+    "bytes": 506426,
+    "md5": "a3aba143574b54380c644864d849da3b"
+   },
+   "airway_results/CF005_airway_3d_strahler.html": {
+    "bytes": 487482,
+    "md5": "6825a7f48a3db9bbb08bf2ccef88906e"
+   },
+   "airway_results/CF005_airway_centerline.csv": {
+    "bytes": 737611,
+    "md5": "4abbb2ad19293f80e236f6a8bca7dc24"
+   },
+   "airway_results/CF005_airway_surface.stl": {
+    "bytes": 12349484,
+    "md5": "40837f33a852a4d8fa7cb39ba1dbcf37"
+   },
+   "airway_results/CF005_smith_dysanapsis.csv": {
+    "bytes": 190,
+    "md5": "bbc9fb7ac5fe0d6b5c07e17dd66f5a19"
+   },
+   "airway_results/CF005_smith_dysanapsis.json": {
+    "bytes": 482,
+    "md5": "9cc41b80d52918e88b6e4a27211fb63c"
+   },
+   "airway_results/CF005_smith_dysanapsis.png": {
+    "bytes": 103940,
+    "md5": "ef7abad8b5aed57069afe4b2319c4ec7"
+   },
+   "airway_results/lung_airways_teasar.nii.gz": {
+    "bytes": 591342,
+    "md5": "0c1e568ec89d2c9b381e6121d912c7e6"
+   },
+   "airway_results/lung_airways_teasar.vtk": {
+    "bytes": 392697,
+    "md5": "bb08f165b42743c0f58587c0fb2da536"
+   },
+   "lobes_ml.nii.gz": {
+    "bytes": 1791225,
+    "md5": "feaf13575157b22fe57a98b1b26cf15b"
+   },
+   "lung_airways_iso.nii.gz": {
+    "bytes": 674944,
+    "md5": "4a3309b92da33f4fb25e0db4e5efd72d"
+   },
+   "totalseg_vessels/lung_airways.nii.gz": {
+    "bytes": 674944,
+    "md5": "4a3309b92da33f4fb25e0db4e5efd72d"
+   }
+  },
+  "vtk": {
+   "arrays": [
+    "Degree",
+    "Distance_From_Root_mm",
+    "Generation",
+    "Generation_Type",
+    "Is_Root",
+    "Is_Trachea",
+    "Lobe",
+    "Lobe_Name",
+    "Lobe_Topology",
+    "Lobe_Topology_Name",
+    "Radius",
+    "Strahler_Order"
+   ],
+   "fragment_vertices": 34,
+   "max_generation": 12,
+   "max_strahler": 6,
+   "n_cells": 4160,
+   "n_points": 4162
+  }
+ },
+ "CF008": {
+  "centerline_csv": {
+   "header": [
+    "case_id",
+    "vertex_id",
+    "x_mm",
+    "y_mm",
+    "z_mm",
+    "Radius_mm",
+    "Diameter_mm",
+    "Degree",
+    "Generation",
+    "Generation_Type",
+    "Strahler_Order",
+    "Is_Root",
+    "Is_Trachea",
+    "Distance_From_Root_mm",
+    "Lobe",
+    "Lobe_Name",
+    "Lobe_Topology",
+    "Lobe_Topology_Name",
+    "V_lung_mL",
+    "V_LUL_mL",
+    "V_LLL_mL",
+    "V_RUL_mL",
+    "V_RML_mL",
+    "V_RLL_mL",
+    "smith_dysanapsis_index",
+    "simple_ratio_D_over_V13"
+   ],
+   "rows": 8488
+  },
+  "files": {
+   "airway_results/CF008_airway_3d.html": {
+    "bytes": 756693,
+    "md5": "56c879b433aa005b579e1ecaf254bc0e"
+   },
+   "airway_results/CF008_airway_3d_strahler.html": {
+    "bytes": 691335,
+    "md5": "7ade7955fabc4f8ff19a562a9586e94c"
+   },
+   "airway_results/CF008_airway_centerline.csv": {
+    "bytes": 1476667,
+    "md5": "cc22d4317decfb757520cbcf47c02d8e"
+   },
+   "airway_results/CF008_airway_surface.stl": {
+    "bytes": 26556284,
+    "md5": "40e276522b4a4b65445367f1794e93b8"
+   },
+   "airway_results/CF008_smith_dysanapsis.csv": {
+    "bytes": 190,
+    "md5": "1b552fab7fbb5ed516a6198f1f6cc0e9"
+   },
+   "airway_results/CF008_smith_dysanapsis.json": {
+    "bytes": 483,
+    "md5": "1b1d77ec1f3c45fde16d0d9ba4f6168c"
+   },
+   "airway_results/CF008_smith_dysanapsis.png": {
+    "bytes": 103749,
+    "md5": "3f509122be2ec09f561e7e34dc4b803b"
+   },
+   "airway_results/lung_airways_teasar.nii.gz": {
+    "bytes": 629484,
+    "md5": "a0de8f4ddb602afca40ca2ba018165d7"
+   },
+   "airway_results/lung_airways_teasar.vtk": {
+    "bytes": 801517,
+    "md5": "cfa08a57ed1ee91707bd933566d09b97"
+   },
+   "lung_airways_iso.nii.gz": {
+    "bytes": 798020,
+    "md5": "90d21fdfa3e3b382d3af16d0c8df37e2"
+   },
+   "totalseg_merged/lung_lobes_multilabel.nii.gz": {
+    "bytes": 3287572,
+    "md5": "cf5f237d4209a19a43296f8282607798"
+   },
+   "totalseg_vessels/lung_airways.nii.gz": {
+    "bytes": 1658466,
+    "md5": "aa69a3039e849dbdc5a4853df0ea8c2c"
+   }
+  },
+  "vtk": {
+   "arrays": [
+    "Degree",
+    "Distance_From_Root_mm",
+    "Generation",
+    "Generation_Type",
+    "Is_Root",
+    "Is_Trachea",
+    "Lobe",
+    "Lobe_Name",
+    "Lobe_Topology",
+    "Lobe_Topology_Name",
+    "Radius",
+    "Strahler_Order"
+   ],
+   "fragment_vertices": 503,
+   "max_generation": 14,
+   "max_strahler": 6,
+   "n_cells": 8471,
+   "n_points": 8488
+  }
+ },
+ "CF121": {
+  "centerline_csv": {
+   "header": [
+    "case_id",
+    "vertex_id",
+    "x_mm",
+    "y_mm",
+    "z_mm",
+    "Radius_mm",
+    "Diameter_mm",
+    "Degree",
+    "Generation",
+    "Generation_Type",
+    "Strahler_Order",
+    "Is_Root",
+    "Is_Trachea",
+    "Distance_From_Root_mm",
+    "Lobe",
+    "Lobe_Name",
+    "Lobe_Topology",
+    "Lobe_Topology_Name",
+    "V_lung_mL",
+    "V_LUL_mL",
+    "V_LLL_mL",
+    "V_RUL_mL",
+    "V_RML_mL",
+    "V_RLL_mL",
+    "smith_dysanapsis_index",
+    "simple_ratio_D_over_V13"
+   ],
+   "rows": 2202
+  },
+  "files": {
+   "airway_results/CF121_airway_3d.html": {
+    "bytes": 269623,
+    "md5": "9ec9a8feed6d9b236d5ffa172290e99e"
+   },
+   "airway_results/CF121_airway_3d_strahler.html": {
+    "bytes": 219314,
+    "md5": "e0d532b20f70667d3adacebfd63419b6"
+   },
+   "airway_results/CF121_airway_centerline.csv": {
+    "bytes": 382972,
+    "md5": "8c0bedf3d2b82d4b69b790b21e4ffe6b"
+   },
+   "airway_results/CF121_airway_surface.stl": {
+    "bytes": 5876484,
+    "md5": "cbbbc79b07641ed82b9ecdc4c9229808"
+   },
+   "airway_results/CF121_smith_dysanapsis.csv": {
+    "bytes": 190,
+    "md5": "f51379c1ba4d6e2763e6994b504d1551"
+   },
+   "airway_results/CF121_smith_dysanapsis.json": {
+    "bytes": 487,
+    "md5": "ed948303d3f7a69248614e1785802e56"
+   },
+   "airway_results/CF121_smith_dysanapsis.png": {
+    "bytes": 100972,
+    "md5": "cb44048df4d352bd84dd440df6a3f6b2"
+   },
+   "airway_results/lung_airways_teasar.nii.gz": {
+    "bytes": 340016,
+    "md5": "0f0ac962fdd928e225f8a3391053f2c7"
+   },
+   "airway_results/lung_airways_teasar.vtk": {
+    "bytes": 207630,
+    "md5": "324ae260d9b98ac3827e421bcb7ec3b6"
+   },
+   "lung_airways_iso.nii.gz": {
+    "bytes": 374112,
+    "md5": "3a005c3957c2ff4a509375820cba5b93"
+   },
+   "totalseg_merged/lung_lobes_multilabel.nii.gz": {
+    "bytes": 2454470,
+    "md5": "d5b5cc7d10393e7390ee9b48ce02d8e1"
+   },
+   "totalseg_vessels/lung_airways.nii.gz": {
+    "bytes": 1188420,
+    "md5": "bc3b51da94e93ddd0842eb0299155d93"
+   }
+  },
+  "vtk": {
+   "arrays": [
+    "Degree",
+    "Distance_From_Root_mm",
+    "Generation",
+    "Generation_Type",
+    "Is_Root",
+    "Is_Trachea",
+    "Lobe",
+    "Lobe_Name",
+    "Lobe_Topology",
+    "Lobe_Topology_Name",
+    "Radius",
+    "Strahler_Order"
+   ],
+   "fragment_vertices": 358,
+   "max_generation": 7,
+   "max_strahler": 5,
+   "n_cells": 2195,
+   "n_points": 2202
+  }
+ },
+ "NL001": {
+  "centerline_csv": {
+   "header": [
+    "case_id",
+    "vertex_id",
+    "x_mm",
+    "y_mm",
+    "z_mm",
+    "Radius_mm",
+    "Diameter_mm",
+    "Degree",
+    "Generation",
+    "Generation_Type",
+    "Strahler_Order",
+    "Is_Root",
+    "Is_Trachea",
+    "Distance_From_Root_mm",
+    "Lobe",
+    "Lobe_Name",
+    "Lobe_Topology",
+    "Lobe_Topology_Name",
+    "V_lung_mL",
+    "V_LUL_mL",
+    "V_LLL_mL",
+    "V_RUL_mL",
+    "V_RML_mL",
+    "V_RLL_mL",
+    "smith_dysanapsis_index",
+    "simple_ratio_D_over_V13"
+   ],
+   "rows": 3835
+  },
+  "files": {
+   "airway_results/NL001_airway_3d.html": {
+    "bytes": 496850,
+    "md5": "2ce4fe8f68751cca30bfadfcef81f208"
+   },
+   "airway_results/NL001_airway_3d_strahler.html": {
+    "bytes": 471169,
+    "md5": "15be79bca7e89b449f99ffa038a0759b"
+   },
+   "airway_results/NL001_airway_centerline.csv": {
+    "bytes": 675364,
+    "md5": "be41c9de90bcc7c7cd990832a0704f3c"
+   },
+   "airway_results/NL001_smith_dysanapsis.csv": {
+    "bytes": 189,
+    "md5": "eeba367b16d713fc7fd57c1bb05f8d23"
+   },
+   "airway_results/NL001_smith_dysanapsis.json": {
+    "bytes": 479,
+    "md5": "dd814b7345587dae776507af8b64719d"
+   },
+   "airway_results/NL001_smith_dysanapsis.png": {
+    "bytes": 104223,
+    "md5": "792004f41a59e84089d38c3f1ad11b14"
+   },
+   "airway_results/lung_airways_teasar.nii.gz": {
+    "bytes": 989939,
+    "md5": "01a48bc51e8d32af8bc8b5ddcb6ea3dc"
+   },
+   "airway_results/lung_airways_teasar.vtk": {
+    "bytes": 361025,
+    "md5": "aaad139f75855e191f161d173265930b"
+   },
+   "lobes_ml.nii.gz": {
+    "bytes": 2452040,
+    "md5": "20da2067ac6954e76fe15a6fe9a34773"
+   },
+   "lung_airways_iso.nii.gz": {
+    "bytes": 1073402,
+    "md5": "dac94095561b661171a8bcfcfa35c512"
+   },
+   "totalseg_vessels/lung_airways.nii.gz": {
+    "bytes": 1073402,
+    "md5": "dac94095561b661171a8bcfcfa35c512"
+   }
+  },
+  "vtk": {
+   "arrays": [
+    "Degree",
+    "Distance_From_Root_mm",
+    "Generation",
+    "Generation_Type",
+    "Is_Root",
+    "Is_Trachea",
+    "Lobe",
+    "Lobe_Name",
+    "Lobe_Topology",
+    "Lobe_Topology_Name",
+    "Radius",
+    "Strahler_Order"
+   ],
+   "fragment_vertices": 82,
+   "max_generation": 11,
+   "max_strahler": 6,
+   "n_cells": 3833,
+   "n_points": 3835
+  }
+ }
+}

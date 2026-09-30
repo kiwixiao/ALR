@@ -91,8 +91,8 @@ The source is the ten stage scripts in `av_phenotype`, 1,963 lines in total, plu
 
 | Step | Module | Source script | Reads | Writes | Skipped when |
 |---|---|---|---|---|---|
-| 1 | segment | `compute_totalseg_airway.py` | `ct.nii.gz` | `totalseg_vessels/lung_airways.nii.gz` and the other three files that task writes, `totalseg_merged/lung_lobes_multilabel.nii.gz`, link `lung_airways.nii.gz` | both mask files exist |
-| 2 | resample | `compute_airway_mask_isotropic.py` | the airway mask | `lung_airways_iso.nii.gz` | it is newer than its source |
+| 1 | segment | `compute_totalseg_airway.py` | `ct.nii.gz` | `totalseg_vessels/lung_airways.nii.gz` and the other three files that task writes, `totalseg_merged/lung_lobes_multilabel.nii.gz`, link `lung_airways.nii.gz` | the airway mask and a lobe mask exist |
+| 2 | resample | `compute_airway_mask_isotropic.py` | the airway mask | `lung_airways_iso.nii.gz` | the isotropic mask exists; the step also skips itself when the mask is newer than its source |
 | 3 | skeleton | `compute_airway_skeleton_teasar.py` | `lung_airways_iso.nii.gz` | `airway_results/lung_airways_teasar.{nii.gz,vtk}` | the VTK exists |
 | 4 | generations | `compute_airway_generations.py` | the VTK | adds `Generation`, `Generation_Type`, `Is_Root`, `Distance_From_Root_mm` | runs every time |
 | 5 | strahler | `compute_airway_strahler.py` | the VTK | adds `Strahler_Order` | runs every time |
@@ -100,10 +100,10 @@ The source is the ten stage scripts in `av_phenotype`, 1,963 lines in total, plu
 | 7 | lobe_topology | `compute_airway_lobe_topology.py` | the VTK, a lobe mask | adds `Lobe_Topology`, `Lobe_Topology_Name` | runs every time |
 | 8 | dysanapsis | `compute_smith_dysanapsis.py` | the VTK, a lobe mask | `airway_results/<CASE>_smith_dysanapsis.{csv,json,png}` | the CSV exists |
 | 9 | export_csv | `export_airway_csv.py` | the VTK, the Smith JSON | `airway_results/<CASE>_airway_centerline.csv` | the CSV exists |
-| 10 | export_html | `export_airway_3d.py` | the VTK | `airway_results/<CASE>_airway_3d.html` and `<CASE>_airway_3d_strahler.html`. A 3D PDF is written only if `pdflatex` and `pymeshlab` are available. | the first HTML exists |
-| 11 | surface | `compute_airway_surface.py` | `lung_airways_iso.nii.gz` | `airway_results/<CASE>_airway_surface.stl` | it is newer than the mask |
+| 10 | export_html | `export_airway_3d.py` | the VTK | `airway_results/<CASE>_airway_3d.html` and `<CASE>_airway_3d_strahler.html`. The GLB and PDF exporters in the source are commented out in `main()` and are not ported. | the first HTML exists |
+| 11 | surface | `compute_airway_surface.py` | `lung_airways_iso.nii.gz` | `airway_results/<CASE>_airway_surface.stl` | the STL exists; the step also skips itself when the STL is newer than the mask |
 
-The skip rules and the "runs every time" behavior are copied from the current runner. The lobe mask lookup order is copied too: `lobes_ml.nii.gz` first, then `totalseg_merged/lung_lobes_multilabel.nii.gz`.
+The skip rules and the "runs every time" behavior are copied from the current runner, with one deliberate change: the current runner skips step 1 whenever the airway mask exists, so a missing lobe mask is never made. ALR also requires a lobe mask before it skips step 1. The lobe mask lookup order is copied too: `lobes_ml.nii.gz` first, then `totalseg_merged/lung_lobes_multilabel.nii.gz`.
 
 Two behaviors are kept exactly as they are today:
 
@@ -120,8 +120,8 @@ Step 11 is new relative to the ten scripts. It has passed its own tests in `av_p
 |---|---|
 | Segmentation | `TotalSegmentator==2.13.0`, `torch==2.11.0`, `nnunetv2==2.7.0` |
 | Centerline and geometry | `kimimaro==5.8.1`, `networkx==3.4.2`, `vtk==9.6.0`, `pyvista==0.47.1`, `nibabel==5.4.0`, `numpy==2.2.6`, `scipy==1.15.3` |
-| Outputs | `matplotlib==3.10.8`, `plotly==6.5.2`, `trimesh==4.12.1` |
-| Optional extra for the 3D PDF | `pymeshlab==2025.7.post1` |
+| Outputs | `matplotlib==3.10.8`, `plotly==6.5.2` |
+| Development | `pytest` |
 
 The Mac has two environments with different versions of `vtk`, `pyvista` and `nibabel`. The runners start each stage with the interpreter that launched them (`sys.executable`), which is the conda base environment, so the pins above are the base versions and not the newer ones in `totalseg213`. This is an inference from the code. The first task of Phase A confirms it by reproducing a stored output.
 
@@ -130,7 +130,7 @@ Weights:
 - TotalSegmentator reads its home folder from `TOTALSEG_HOME_DIR` (`config.py:16`) and looks for weights under `nnunet/results` in it.
 - Before any TotalSegmentator call, ALR sets `TOTALSEG_HOME_DIR` to `<sys.prefix>/share/totalsegmentator` unless the user has set it. The weights therefore live inside the conda environment and never in the home folder.
 - `alr setup` downloads the four models with `totalsegmentator.libs.download_pretrained_weights` (`libs.py:162`): 117 (`lung_vessels`), 291 (the organs part of `total`, which holds the five lobes), and 297 and 298 (the 3 mm and 6 mm cropping models). They take about 0.8 GB on disk. None of the four is in TotalSegmentator's list of licensed models, so no registration is needed.
-- TotalSegmentator sends a usage record to `stats.totalsegmentator.com` after each run when `send_usage_stats` is true in its `config.json` (`config.py:218`). The record holds the task, flags, platform, versions, whether CUDA is available and an anonymous id. `alr setup` sets `send_usage_stats` to false with TotalSegmentator's own `set_config_key` (`config.py:204`) inside the environment's home folder. The README states this and how to turn it back on.
+- TotalSegmentator sends a usage record to `stats.totalsegmentator.com` after each run when `send_usage_stats` is true in its `config.json` (`config.py:218`). The record holds the task, flags, platform, versions, whether CUDA is available and an anonymous id. `alr setup` first calls `setup_totalseg()` (`config.py:54`), which creates `config.json` in the home folder if it is missing, and then sets `send_usage_stats` to false with `set_config_key` (`config.py:204`). `set_config_key` only edits an existing file and otherwise prints a warning. The README states this and how to turn it back on.
 - `alr setup` also writes a conda `activate.d` and `deactivate.d` script that sets and unsets the variable, so a manual `TotalSegmentator` call in the activated environment uses the same folder.
 - TotalSegmentator is called as the executable next to the running interpreter. This replaces `conda run -n totalseg213`. The flags are the current ones: `-ta lung_vessels` for the airway mask, and `-ta total -ml -rmb -rs <five lobe classes>` for the lobes.
 - The device is chosen by `device.py`: CUDA if available, then MPS, then CPU. This replaces the fixed `mps` in `compute_totalseg_airway.py:30`.
@@ -149,14 +149,13 @@ Weights:
 
 ## 9. License and dependencies
 
-ALR's own code is MIT, as the author chose. Two dependencies are GPL:
+ALR's own code is MIT, as the author chose. One required dependency is GPL: `kimimaro` is GPL 3 or later and performs the TEASAR skeletonization.
 
-- `kimimaro` is GPL 3 or later. It performs the TEASAR skeletonization and is required.
-- `pymeshlab` is GPL 3. It is imported only inside the 3D PDF export (`export_airway_3d.py:490`), so the port makes it an optional extra.
+`pymeshlab` (GPL 3) and `trimesh` (MIT) appear in the source only inside the GLB and PDF exporters, which are commented out in `main()`. ALR does not install either.
 
-Installing a GPL library as a separate dependency is common practice for MIT projects. The position is less clear for anyone who redistributes ALR together with `kimimaro`, for example in a container image, because that bundle carries the GPL terms of `kimimaro`. This is a summary of the facts and not legal advice. The README will list the license of every dependency. See open question 1.
+Installing a GPL library as a separate dependency is common practice for MIT projects. The position is less clear for anyone who redistributes ALR together with `kimimaro`, for example in a container image, because that bundle carries the GPL terms of `kimimaro`. This is a summary of the facts and not legal advice. The README lists the license of every dependency. The author decided on 2026-09-30 to keep MIT.
 
-The other dependencies are permissive: `trimesh`, `pyvista`, `nibabel` and `plotly` are MIT, `vtk`, `scipy`, `numpy` and `networkx` are BSD, and `matplotlib` uses the Python Software Foundation license. TotalSegmentator is Apache 2.0. The README asks users to cite TotalSegmentator, and takes the citation text from its repository when the README is written.
+The other dependencies are permissive: `pyvista`, `nibabel` and `plotly` are MIT, `vtk`, `scipy`, `numpy` and `networkx` are BSD, and `matplotlib` uses the Python Software Foundation license. TotalSegmentator is Apache 2.0. The README asks users to cite TotalSegmentator, and takes the citation text from its repository when the README is written.
 
 ## 10. Testing
 
@@ -183,7 +182,7 @@ Before any push, a Linux container built from `environment.yml` runs the unit te
 
 ## 11. Rollout
 
-- **Phase A, ALR alone.** The author's `av_phenotype` code and its 249 finished cases stay untouched. The first task is to show, on this Mac, that the current scripts reproduce the stored outputs of the regression cases when run from the stored masks. Nothing is ported before that is shown. Then the ten steps are ported one at a time, each with its tests, and step 11 is added.
+- **Phase A, ALR alone.** The author's `av_phenotype` code and its 249 finished cases stay untouched. The original scripts are copied into `reference/av_phenotype/`. The first task is to show, with `tools/reproduce_reference.py`, that they reproduce the stored outputs of the regression cases when run from the stored masks, first on the Mac and then on Linux. Nothing is ported before that is shown. Then the ten steps are ported one at a time, each with its tests, and step 11 is added.
 - **Phase B, side by side.** ALR runs on the regression cases into a scratch folder, and the outputs are compared with the stored ones.
 - **Phase C, hand over. This needs the author's explicit approval.** `run_pipeline.py` stages 22 to 29 and `run_airway_pipeline.py` call ALR, and the ten old scripts move to `archive/`. Five other scripts mention the airway stages or their outputs and must be checked first: `update_airway_csv_cohort.py`, `run_dysanapsis_cohort.py`, `compute_vascular_dysanapsis_volume_ratios.py`, `export_vessel_csv.py` and `export_vessel_3d.py`. ALR keeps every file name and column, so they should need no change.
 - **Linux acceptance.** Clone, create the environment, run `alr setup` and `alr check`. Copy CF008's CT and its TotalSegmentator masks and run `alr run`. The output must equal the Mac output. Then run TotalSegmentator on Linux from the CT alone and record the Dice against the Mac mask.
