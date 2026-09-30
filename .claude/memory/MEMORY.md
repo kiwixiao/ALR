@@ -1,0 +1,1 @@
+- [ALR design spec](../../docs/specs/2026-09-30-alr-design.md) — decisions, file contract, environment, tests and rollout; read before any work
