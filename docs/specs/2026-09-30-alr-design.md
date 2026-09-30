@@ -130,6 +130,7 @@ Weights:
 - TotalSegmentator reads its home folder from `TOTALSEG_HOME_DIR` (`config.py:16`) and looks for weights under `nnunet/results` in it.
 - Before any TotalSegmentator call, ALR sets `TOTALSEG_HOME_DIR` to `<sys.prefix>/share/totalsegmentator` unless the user has set it. The weights therefore live inside the conda environment and never in the home folder.
 - `alr setup` downloads the four models with `totalsegmentator.libs.download_pretrained_weights` (`libs.py:162`): 117 (`lung_vessels`), 291 (the organs part of `total`, which holds the five lobes), and 297 and 298 (the 3 mm and 6 mm cropping models). They take about 0.8 GB on disk. None of the four is in TotalSegmentator's list of licensed models, so no registration is needed.
+- TotalSegmentator sends a usage record to `stats.totalsegmentator.com` after each run when `send_usage_stats` is true in its `config.json` (`config.py:218`). The record holds the task, flags, platform, versions, whether CUDA is available and an anonymous id. `alr setup` sets `send_usage_stats` to false with TotalSegmentator's own `set_config_key` (`config.py:204`) inside the environment's home folder. The README states this and how to turn it back on.
 - `alr setup` also writes a conda `activate.d` and `deactivate.d` script that sets and unsets the variable, so a manual `TotalSegmentator` call in the activated environment uses the same folder.
 - TotalSegmentator is called as the executable next to the running interpreter. This replaces `conda run -n totalseg213`. The flags are the current ones: `-ta lung_vessels` for the airway mask, and `-ta total -ml -rmb -rs <five lobe classes>` for the lobes.
 - The device is chosen by `device.py`: CUDA if available, then MPS, then CPU. This replaces the fixed `mps` in `compute_totalseg_airway.py:30`.
@@ -178,7 +179,7 @@ Comparisons:
 
 The segmentation test sets its Dice threshold from measurement on the Mac and later on Linux. The threshold is not chosen in advance.
 
-Before any push, a Linux container built from `environment.yml` runs the unit tests and the full command sequence of success criterion 1 on a public demo CT. Docker Desktop is installed on the Mac. The container is Linux on ARM by default, and an x86 container is possible with emulation but slow. Neither replaces a run on a real Linux machine.
+Before any push, a Linux container built from `environment.yml` runs the unit tests and the full command sequence of success criterion 1 on one CT from the author's cohort, mounted into the container and never committed or copied into the image. The repository ships no demo scan. Docker Desktop is installed on the Mac. The container is Linux on ARM by default, and an x86 container is possible with emulation but slow. Neither replaces a run on a real Linux machine.
 
 ## 11. Rollout
 
@@ -199,12 +200,12 @@ Before any push, a Linux container built from `environment.yml` runs the unit te
 - On CPU only machines the `torch` download is large.
 - `.nii` input is not yet specified. The first version accepts `.nii.gz`.
 
-## 13. Open questions for the author
+## 13. Decisions on the open questions
 
-1. **License and GPL dependencies.** Resolved 2026-09-30: ALR stays MIT and the README documents the license of every dependency.
-2. **Copyright holder.** The CCHMC question is resolved 2026-09-30: the author states the code is their own work and no approval is needed. Still open: the line would read "Copyright (c) 2026 Qiwei Xiao", taken from the pythoncip metadata. Please confirm the name.
-3. **Author email.** The package metadata is public. Use no email, a GitHub noreply address, or your work address?
-4. **TotalSegmentator usage statistics.** The installed configuration has `send_usage_stats` set to true. I have not checked what is sent. Should `alr setup` turn it off, or leave the default and document it?
-5. **Extra TotalSegmentator files.** Step 1 keeps the arteries, veins and airway wall files that the `lung_vessels` task writes, as today. Delete them instead, so the case folder holds only the airway?
-6. **Demo CT.** Which public CT should the README use? I will check its license before linking it.
-7. **What ALR stands for.** The README should spell it out.
+1. **License.** Resolved 2026-09-30: ALR stays MIT, and the README documents the license of every dependency.
+2. **Copyright holder.** Resolved 2026-09-30: the code is the author's own work, no CCHMC approval is needed, and the line reads "Copyright (c) 2026 Qiwei Xiao".
+3. **Author email.** Open. The package metadata is public: no email, a GitHub noreply address, or the work address. Until decided, the metadata carries the name only.
+4. **TotalSegmentator usage statistics.** Resolved 2026-09-30: `alr setup` turns them off (section 7).
+5. **Extra TotalSegmentator files.** Resolved 2026-09-30: keep the artery, vein and airway wall files that the `lung_vessels` task writes. Step 1 deletes nothing.
+6. **Demo CT.** Resolved 2026-09-30: none. The repository ships no scan (section 10).
+7. **Name.** Resolved 2026-09-30: ALR means airway lung ratio. The README spells it out.
