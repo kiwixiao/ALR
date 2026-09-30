@@ -51,6 +51,7 @@ Everything under `src/alr/`, `environment.yml` and `pyproject.toml` does not exi
 - Use the test driven development skill if you have it: write the failing test, watch it fail, write the code, watch it pass. Run the whole test folder before every commit.
 - One commit per task, on `feature/port-airway-chain`. Never merge to `main`, never force push. The author merges.
 - Commit messages carry no Claude attribution line.
+- Git identity: commit as `kiwixiao <41949675+kiwixiao@users.noreply.github.com>` (`git config user.email 41949675+kiwixiao@users.noreply.github.com`). Never commit a personal or work email address, and never write a path under a home folder into a file in this repository.
 - After every task, update `PROGRESS.md` (NEXT STEP, STATUS, SESSION LOG) in the same commit.
 - Port by the recipe in Task 8. Do not change an algorithm, a constant, a file name or a column. If a test shows the original behavior looks wrong, keep it and tell the author.
 - Report facts only. If a test fails, say which and show the output. Do not weaken a test to make it pass.
