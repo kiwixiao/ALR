@@ -17,7 +17,7 @@ ALR (airway lung ratio) is a public, MIT licensed Python package and one conda e
 
 | Path | Content |
 |---|---|
-| `reference/av_phenotype/` | The original scripts. They are the source of truth for behavior. Never edit them. It holds the ten stage scripts, the two runners, `compute_airway_surface.py` with its test, `diagnose_airway_surface.py` and the TotalSegmentator notes. |
+| `reference/av_phenotype/` | The original scripts. They are the source of truth for behavior. Never edit them. It holds the ten stage scripts, the two runners, `compute_airway_surface.py` with its test and the TotalSegmentator notes. |
 | `tools/reproduce_reference.py` | Runs the original scripts on stored masks and compares with stored outputs. |
 | `tools/build_reference_data.py` | Runs TotalSegmentator and then the original scripts on CTs of this machine. Its output is the reference for the regression tests. |
 | `tools/pack_regression_data.sh`, `tools/make_golden.py`, `tests/regression/golden.json` | Optional: the author's Mac data pack (71 MB) and its md5 list, for a cross platform check only. |
